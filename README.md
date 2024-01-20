@@ -6,7 +6,7 @@ This template should help get you started developing with Vue 3 in Vite.
 
 To run this project, you will need to add the following environment variable to your .env file
 
-`VITE_API_URL` - The URL of the backend API.
+VITE_API_URL =  http://localhost:3000
 
 ## Recommended IDE Setup
 
