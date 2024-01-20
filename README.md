@@ -8,6 +8,11 @@ To run this project, you will need to add the following environment variable to 
 
 VITE_API_URL =  http://localhost:3000
 
+## State Persistence
+
+This project uses `pinia-plugin-persistedstate` to persist the state of the application. The plugin automatically saves the state of the store in the local storage of the browser and restores it on page reloads. This ensures that the application's state is maintained across browser sessions.
+
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
