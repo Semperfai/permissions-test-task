@@ -2,6 +2,10 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
+## Running the Backend Server
+
+This project uses `json-server` to simulate a REST API for development purposes. `json-server` provides a full fake REST API with zero coding in no time.
+
 ### Environment Variables
 
 To run this project, you will need to add the following environment variable to your .env file
