@@ -2,7 +2,11 @@
   <div>
     <div class="group-list">
       <ul class="group-list__items">
-        <router-link v-for="group in rootStore.groups" :key="group.id" :to="`/groups/${group.id}`">
+        <router-link
+          v-for="group in rootStore.groups"
+          :key="group.id"
+          :to="`/groups/${group.id}`"
+        >
           <li
             class="group-list__item"
             :class="{ 'group-list__item--active': isActiveGroup(group.id) }"
@@ -12,10 +16,19 @@
         </router-link>
       </ul>
     </div>
-    <button @click="showForm = true" class="group-list__add-button">Add New Group</button>
+    <button @click="showForm = true" class="group-list__add-button">
+      Add New Group
+    </button>
     <div v-if="showForm" class="modal-overlay">
       <div class="modal">
-        <input type="text" v-model="newGroupName" placeholder="Group Name" class="modal__input" />
+        <p v-if="!newGroupName" class="modal__req">Role name is required*</p>
+
+        <input
+          type="text"
+          v-model="newGroupName"
+          placeholder="Group Name"
+          class="modal__input"
+        />
         <p class="modal__title">Roles</p>
         <div v-for="role in roles" :key="role.id" class="modal__checkbox-group">
           <label class="modal__label">
@@ -28,52 +41,60 @@
             {{ role.name }}
           </label>
         </div>
-        <button :disabled="isDisabled" @click="addGroup" class="modal__save-button">
+        <button
+          :disabled="isDisabled"
+          @click="addGroup"
+          class="modal__save-button"
+        >
           Save Group
         </button>
-        <button @click="showForm = false" class="modal__close-button">Close</button>
+        <button @click="showForm = false" class="modal__close-button">
+          Close
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useRootStore } from '@/stores/root/root.store'
-import { computed, onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRootStore } from "@/stores/root/root.store";
+import { computed, onBeforeMount, ref } from "vue";
+import { useRoute } from "vue-router";
 
-const rootStore = useRootStore()
-const route = useRoute()
+const rootStore = useRootStore();
+const route = useRoute();
 
-const showForm = ref(false)
-const newGroupName = ref('')
-const selectedRoleIds = ref([])
+const showForm = ref(false);
+const newGroupName = ref("");
+const selectedRoleIds = ref([]);
 
 const isActiveGroup = (groupId: string) => {
-  return route.path === `/groups/${groupId}`
-}
+  return route.path === `/groups/${groupId}`;
+};
 const roles = computed(() => {
-  return rootStore.roles
-})
+  return rootStore.roles;
+});
 const isDisabled = computed(() => {
-  return !newGroupName.value || selectedRoleIds.value.length === 0
-})
+  return !newGroupName.value || selectedRoleIds.value.length === 0;
+});
 const addGroup = () => {
   const newGroup = {
-    id: String(Math.max(0, ...rootStore.groups.map((group) => Number(group.id))) + 1),
+    id: String(
+      Math.max(0, ...rootStore.groups.map((group) => Number(group.id))) + 1
+    ),
     name: newGroupName.value,
-    roleIds: selectedRoleIds.value
-  }
-  rootStore.addGroup(newGroup)
-  showForm.value = false
-  newGroupName.value = ''
-  selectedRoleIds.value = []
-}
+    roleIds: selectedRoleIds.value,
+  };
+  rootStore.addGroup(newGroup);
+  showForm.value = false;
+  newGroupName.value = "";
+  selectedRoleIds.value = [];
+};
 
 onBeforeMount(async () => {
-  await rootStore.fetchGroups()
-  await rootStore.fetchRoles()
-})
+  await rootStore.fetchGroups();
+  await rootStore.fetchRoles();
+});
 </script>
 
 <style scoped lang="scss">
@@ -142,12 +163,23 @@ onBeforeMount(async () => {
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-
+  width: 100%;
   max-width: 400px;
+
+  @media screen and (max-width: 768px) {
+    max-width: 80%;
+    padding: 10px;
+  }
 
   &__title {
     margin-bottom: 10px;
     color: #000;
+  }
+
+  &__req {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 }
 
