@@ -22,7 +22,7 @@ onBeforeMount(async () => {
     </template>
     <template #page>
       <Routing />
+      <BaseNotify />
     </template>
-    <BaseNotify />
   </DefaultLayout>
 </template>
