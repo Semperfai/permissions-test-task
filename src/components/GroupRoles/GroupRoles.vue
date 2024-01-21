@@ -2,7 +2,8 @@
   <div class="group-roles">
     <div class="group-roles__header">
       <h2>
-        Roles for Group: <span class="group-roles__role">{{ group?.name }}</span>
+        Roles for Group:
+        <span class="group-roles__role">{{ group?.name }}</span>
       </h2>
       <input
         type="text"
@@ -12,14 +13,22 @@
       />
       <select v-model="selectedPermission" class="group-roles__select">
         <option value="">All Permissions</option>
-        <option v-for="permission in availablePermissions" :key="permission" :value="permission">
+        <option
+          v-for="permission in availablePermissions"
+          :key="permission"
+          :value="permission"
+        >
           {{ permission }}
         </option>
       </select>
     </div>
 
     <ul class="group-roles__list">
-      <li v-for="role in paginatedGroupRoles" :key="role.id" class="group-roles__item">
+      <li
+        v-for="role in paginatedGroupRoles"
+        :key="role.id"
+        class="group-roles__item"
+      >
         <input
           type="checkbox"
           :id="'role-' + role.id"
@@ -29,11 +38,15 @@
         />
         <label :for="'role-' + role.id"
           >{{ role.name }} - Permissions:
-          <span class="group-roles__permissions">{{ role.permissions.join(', ') }}</span></label
+          <span class="group-roles__permissions">{{
+            role.permissions.join(", ")
+          }}</span></label
         >
       </li>
     </ul>
-    <button @click="saveGroupRoles" class="group-roles__save-button">Save Changes</button>
+    <button @click="saveGroupRoles" class="group-roles__save-button">
+      Save Changes
+    </button>
 
     <div class="group-roles__pagination">
       <button @click="prevPage" :disabled="currentPage === 1">Prev</button>
@@ -45,87 +58,97 @@
       >
         {{ page }}
       </button>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">
+        Next
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRootStore } from '@/stores/root/root.store'
-import { computed, ref, watch } from 'vue'
+import { useRootStore } from "@/stores/root/root.store";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps({
-  groupId: { type: String, required: true }
-})
+  groupId: { type: String, required: true },
+});
 
-const rootStore = useRootStore()
-const search = ref('')
-const selectedPermission = ref('')
-const currentPage = ref(1)
-const pageSize = 5
-const selectedRoleIds = ref<number[]>([])
+const rootStore = useRootStore();
+const search = ref("");
+const selectedPermission = ref("");
+const currentPage = ref(1);
+const pageSize = 5;
+const selectedRoleIds = ref<number[]>([]);
 
 const saveGroupRoles = () => {
   const updatedGroup = {
     ...group.value,
-    roleIds: selectedRoleIds.value
-  }
-  rootStore.updateGroup(updatedGroup)
-}
+    roleIds: selectedRoleIds.value,
+  };
+  rootStore.updateGroup(updatedGroup);
+};
 
-await rootStore.fetchGroups()
-await rootStore.fetchRoles()
+await rootStore.fetchGroups();
+await rootStore.fetchRoles();
 
-const group = computed(() => rootStore.groups.find((g) => g.id === props.groupId))
+const group = computed(() =>
+  rootStore.groups.find((g) => g.id === props.groupId)
+);
 const availablePermissions = computed(() => {
-  const permissions = new Set()
+  const permissions = new Set();
   rootStore.roles.forEach((role) => {
-    role.permissions.forEach((permission) => permissions.add(permission))
-  })
-  return Array.from(permissions)
-})
+    role.permissions.forEach((permission) => permissions.add(permission));
+  });
+  return Array.from(permissions);
+});
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredGroupRoles.value.length / pageSize)
-})
+  return Math.ceil(filteredGroupRoles.value.length / pageSize);
+});
 
 const filteredGroupRoles = computed(() => {
-  if (!group.value) return []
+  if (!group.value) return [];
   return rootStore.roles.filter((role) => {
     return (
       group?.value?.roleIds.includes(Number(role.id)) &&
       role.name.toLowerCase().includes(search.value.toLowerCase()) &&
-      (selectedPermission.value === '' || role.permissions.includes(selectedPermission.value))
-    )
-  })
-})
+      (selectedPermission.value === "" ||
+        role.permissions.includes(selectedPermission.value))
+    );
+  });
+});
 const paginatedGroupRoles = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return filteredGroupRoles.value.slice(start, end)
-})
+  const start = (currentPage.value - 1) * pageSize;
+  const end = start + pageSize;
+  return filteredGroupRoles.value.slice(start, end);
+});
 
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
-}
+  if (currentPage.value > 1) currentPage.value--;
+};
 
 const nextPage = () => {
-  if (currentPage.value * pageSize < filteredGroupRoles.value.length) currentPage.value++
-}
+  if (currentPage.value * pageSize < filteredGroupRoles.value.length)
+    currentPage.value++;
+};
 
 watch(
   group,
   (newGroup) => {
     if (newGroup) {
-      selectedRoleIds.value = newGroup.roleIds.slice()
+      selectedRoleIds.value = newGroup.roleIds.slice();
     }
   },
   { immediate: true }
-)
+);
 </script>
 
 <style lang="scss">
 .group-roles {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   &__header {
     display: flex;
     justify-content: space-between;
@@ -161,6 +184,7 @@ watch(
     }
   }
   &__save-button {
+    max-width: 200px;
     padding: 0.5rem 1rem;
     background-color: #007bff;
     color: white;

@@ -1,47 +1,60 @@
 <script lang="ts" setup>
-import { ref, watchEffect } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useRootStore } from '@/stores/root/root.store'
+import { ref, watchEffect } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useRootStore } from "@/stores/root/root.store";
 
-const router = useRouter()
-const route = useRoute()
-const groupsStore = useRootStore()
+const router = useRouter();
+const route = useRoute();
+const rootStore = useRootStore();
 
 const isActive = (path: string) => {
-  if (path === '/') {
-    return route.path === '/' || route.path.startsWith('/groups')
+  if (path === "/") {
+    return route.path === "/" || route.path.startsWith("/groups");
+  } else if (path === "/roles") {
+    return route.path.startsWith("/roles");
   }
-  return route.path === path
-}
+  return route.path === path;
+};
 
 const menu = ref([
   {
-    to: '/',
-    text: 'Groups',
-    redirectIfGroupsExist: true
+    to: "/",
+    text: "Groups",
+    redirectIfExist: true,
+    redirectPath: "/groups",
   },
   {
-    to: '/roles',
-    text: 'Roles'
-  }
-])
+    to: "/roles",
+    text: "Roles",
+    redirectIfExist: true,
+    redirectPath: "/roles",
+  },
+]);
 
-const handleNavigation = async (item: { to: string; redirectIfGroupsExist?: boolean }) => {
-  if (item.redirectIfGroupsExist) {
-    await groupsStore.fetchGroups()
-    if (groupsStore.groups.length > 0) {
-      router.push(`/groups/${groupsStore.groups[0].id}`)
-      return
+const handleNavigation = async (item: {
+  to: string;
+  redirectIfExist?: boolean;
+  redirectPath: string;
+}) => {
+  if (item.redirectIfExist) {
+    await rootStore.fetchGroups();
+    await rootStore.fetchRoles();
+    if (item.to === "/roles" && rootStore.roles.length > 0) {
+      router.push(`${item.redirectPath}/${rootStore.roles[0].id}`);
+      return;
+    } else if (item.to === "/" && rootStore.groups.length > 0) {
+      router.push(`${item.redirectPath}/${rootStore.groups[0].id}`);
+      return;
     }
   }
-  router.push(item.to)
-}
+  router.push(item.to);
+};
 
 watchEffect(() => {
-  if (route.path === '/' && groupsStore.groups.length > 0) {
-    router.push(`/groups/${groupsStore.groups[0].id}`)
+  if (route.path === "/" && rootStore.groups.length > 0) {
+    router.push(`/groups/${rootStore.groups[0].id}`);
   }
-})
+});
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { GroupList } from '@/components/GroupList'
+import { GroupList } from "@/components/GroupList";
+import { BaseSpinner } from "@/shared/ui";
 </script>
 
 <template>
@@ -14,7 +15,9 @@ import { GroupList } from '@/components/GroupList'
             <router-view />
           </template>
           <template #fallback>
-            <div>Loading...</div>
+            <div>
+              <BaseSpinner />
+            </div>
           </template>
         </Suspense>
       </div>
